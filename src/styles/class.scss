@@ -1,0 +1,53 @@
+html, body {
+  font-weight: 500;
+}
+
+.main {
+  min-width: 100vw;
+  min-height: 100vh;
+  height: 100%;
+}
+
+$margin-y: 16px;
+.full-height {
+  height: calc(100vh - 49px - 2 * $margin-y);
+  margin-top: $margin-y !important;
+  margin-bottom: $margin-y !important;
+  padding: 0 !important;
+  // copy from v-container
+  margin-right: auto;
+  margin-left: auto;
+  @media (min-width: 960px) {
+    max-width: 900px !important;
+  }
+  @media (min-width: 1280px) {
+    max-width: 1200px !important;
+  }
+  @media (min-width: 1920px) {
+    max-width: 1800px !important;
+  }
+  @media (min-width: 2560px) {
+    max-width: 2400px !important;
+  }
+}
+
+.column-flow {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.side-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 210px !important;
+  height: 100%;
+}
+
+.name-input {
+  flex: 0 0 150px !important;
+}
+
+.vl { // vertical line
+  border-left: 1px solid black;
+  margin-right: 5px;
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 9019,
+    "en": "Ancient Cron Spice",
+    "name": "古代克羅恩的香辛料",
+    "price": 50000
+  },
+  {
+    "id": 820015,
+    "en": "Nadia Rowen's Special Sauce",
+    "name": "納迪亞羅文的特製醬料",
+    "price": 10000
+  },
+  {
+    "id": 4986,
+    "en": "Ibellab's Essence",
+    "name": "伊培拉的淨水",
+    "price": 10000
+  },
+  {
+    "id": 4916,
+    "en": "Blue Reagent",
+    "name": "藍色液體試藥",
+    "price": 50000
+  }
+]
