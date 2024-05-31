@@ -6,12 +6,13 @@
   "scripts": {
     "start": "cross-env NODE_OPTIONS='--no-warnings' vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
     "@vueuse/core": "^10.9.0",
-    "pinia": "^2.1.7",
     "roboto-fontface": "*",
     "vite-tsconfig-paths": "^4.3.2",
     "vue": "^3.3.0",
@@ -26,6 +27,8 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.22.0",
+    "gh-pages": "^6.1.1",
+    "pinia": "^2.1.7",
     "sass": "^1.69.0",
     "typescript-vue-plugin": "^1.8.27",
     "unplugin-fonts": "^1.1.0",

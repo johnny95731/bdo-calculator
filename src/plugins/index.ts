@@ -11,7 +11,6 @@ import { router } from './route.ts';
 // Types
 import type { App } from 'vue';
 
-
 export function registerPlugins (app: App) {
   app.use(vuetify);
   app.use(createPinia());

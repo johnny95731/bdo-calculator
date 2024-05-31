@@ -14,10 +14,13 @@ const iconMap = {
   'link': 'mdi-link',
   'processing': 'mdi-hammer',
   'save': 'mdi-file',
-};
+} as const;
 
 export type IconKeys = keyof typeof iconMap
 
-export const getIcon = (name: IconKeys) => {
+export function getIcon(name: string): string | undefined
+export function getIcon(name: IconKeys): string
+export function getIcon(name: IconKeys | string): string | undefined {
+  // @ts-expect-error
   return iconMap[name];
-};
+}

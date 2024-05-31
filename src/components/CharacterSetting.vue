@@ -10,7 +10,6 @@ import { numFormat, round } from '@/utils/helpers';
 import { calcAvgYield } from '@/utils/bdo';
 import { getIcon } from '@/utils/icons';
 
-const [DefRegionTitle, ReuseRegionTitle] = createReusableTemplate<{title_: string}>();
 const [DefTooltip, ReuseTooltip] = createReusableTemplate();
 
 const dialogTitle = '角色設定';
@@ -59,20 +58,7 @@ const alchemyAvgYields = computed(() => {
 </script>
 
 <template>
-  <DefRegionTitle v-slot="{ title_ }">
-    <div
-      class="d-flex align-center w-100"
-    >
-      <h3 class="flex-0-0 mx-1 text-body-1 font-weight-bold">
-        {{ title_ }}
-      </h3>
-      <v-divider
-        opacity="1"
-        color="black"
-      />
-    </div>
-  </DefRegionTitle>
-  <DefTooltip v-slot="{ $slots }">
+  <DefTooltip>
     <v-tooltip
       location="top"
       :eager="false"
@@ -120,7 +106,17 @@ const alchemyAvgYields = computed(() => {
           v-bind="childAttrs.panel"
         >
           <template #title>
-            <ReuseRegionTitle title_="交易所" />
+            <div
+              class="d-flex align-center w-100"
+            >
+              <h3 class="flex-0-0 mx-1 text-body-1 font-weight-bold">
+                交易所
+              </h3>
+              <v-divider
+                opacity="1"
+                color="black"
+              />
+            </div>
           </template>
           <div>
             <DataBlock
@@ -172,7 +168,17 @@ const alchemyAvgYields = computed(() => {
           v-bind="childAttrs.panel"
         >
           <template #title>
-            <ReuseRegionTitle title_="加工" />
+            <div
+              class="d-flex align-center w-100"
+            >
+              <h3 class="flex-0-0 mx-1 text-body-1 font-weight-bold">
+                加工
+              </h3>
+              <v-divider
+                opacity="1"
+                color="black"
+              />
+            </div>
           </template>
           <div>
             <DataBlock 
@@ -224,7 +230,17 @@ const alchemyAvgYields = computed(() => {
           v-bind="childAttrs.panel"
         >
           <template #title>
-            <ReuseRegionTitle title_="煉金" />
+            <div
+              class="d-flex align-center w-100"
+            >
+              <h3 class="flex-0-0 mx-1 text-body-1 font-weight-bold">
+                煉金
+              </h3>
+              <v-divider
+                opacity="1"
+                color="black"
+              />
+            </div>
           </template>
           <div>
             <DataBlock 

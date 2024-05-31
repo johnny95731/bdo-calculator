@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, reactive, ref } from 'vue';
-import { createReusableTemplate } from '@vueuse/core';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const ExtraDescriptions = defineAsyncComponent({
   loader: () => import('@/components/ExtraDescriptions.vue')
 });
@@ -11,16 +10,9 @@ const CharacterSetting = defineAsyncComponent({
 import useCharacterStore from 'stores//useCharacterStore';
 import useProcessingStore from 'stores//useProcessingStore';
 import useAlchemyStore from 'stores//useAlchemyStore';
-import { routePages } from './plugins/route';
-import { getIcon, IconKeys } from './utils/icons';
+import { pages } from './plugins/route';
+import { IconKeys, getIcon } from './utils/icons';
 import links from '@/utils/links.json';
-
-const [DefItem, ReuseItem] = createReusableTemplate<{
-  title_: string,
-  href?: string,
-  icon?: IconKeys,
-  click?: () => void
-}>();
 
 // 遊戲額外資訊
 const showExtraDescriptions = ref(false);
@@ -29,10 +21,11 @@ const extraDescriptionsFist = ref(false); // 第一次開啟
 const showCharacterSetting = ref(false);
 const characterSettingFist = ref(false);
 
+const route = useRoute();
 const navDrawerState = reactive({
   rail: false,
-  temporary: false,
-  model: false
+  temporary: route.path !== '/',
+  model: route.path === '/'
 });
 const clickAppBarNavIcon = () => {
   const key = navDrawerState.temporary ? 'model' : 'rail';
@@ -40,7 +33,7 @@ const clickAppBarNavIcon = () => {
 };
 
 const router = useRouter();
-router.afterEach((to) => {
+router.beforeEach((to) => {
   // navigation-drawer，以類似youtube方式執行
   // 首頁為`rail`方式，完整 <--> 縮小到剩icon
   // 其他頁以temporary，完整+overlay <--> 完全收起(看不見)
@@ -63,25 +56,6 @@ window.addEventListener('beforeunload', () => {
 </script>
 
 <template>
-  <DefItem v-slot="{title_, icon, href, click}">
-    <v-list-item
-      link
-      :href="href"
-      :prepend-icon="icon && getIcon(icon)"
-      @click="click"
-    >
-      <v-list-item-title
-        class="w-auto text-left"
-      >
-        <label
-          class="text-body-1 font-weight-bold"
-        >
-          {{ title_ }}
-        </label>
-      </v-list-item-title>
-    </v-list-item>
-  </DefItem>
-
   <v-app>
     <v-app-bar
       v-once
@@ -136,31 +110,60 @@ window.addEventListener('beforeunload', () => {
         v-once
         class="h-100 my-n1 column-flow ga-1"
       >
-        <ReuseItem
-          v-for="page in routePages"
+        <v-list-item
+          v-for="page in pages"
           :key="page.title"
-          :title_="page.title"
-          :href="page.href"
-          :icon="page.icon"
-        />
-        <v-spacer />
-        <ReuseItem
+          link
+          :to="page.path"
+          :prepend-icon="page.name && getIcon(page.name as IconKeys)"
+        >
+          <v-list-item-title
+            class="w-auto text-left"
+          >
+            <label
+              class="text-body-1 font-weight-bold"
+            >
+              {{ page.title }}
+            </label>
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          tag="button"
           id="link"
-          title_="相關連結"
-          icon="link"
-        />
+          :prepend-icon="getIcon('link')"
+        >
+          <v-list-item-title
+            class="w-auto text-left"
+          >
+            <label
+              class="text-body-1 font-weight-bold"
+            >
+              相關連結
+            </label>
+          </v-list-item-title>
+        </v-list-item>
         <v-menu
           open-on-hover
           location="end"
           activator="#link"
         >
           <v-list>
-            <ReuseItem
-              v-for="page in links"
-              :key="page.name"
-              :title_="page.name"
-              :href="page.href"
-            />
+            <v-list-item
+              v-for="link in links"
+              :key="link.name"
+              link
+              :href="link.href"
+            >
+              <v-list-item-title
+                class="w-auto text-left"
+              >
+                <label
+                  class="text-body-1 font-weight-bold"
+                >
+                  {{ link.name }}
+                </label>
+              </v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       </nav>

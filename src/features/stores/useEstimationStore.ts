@@ -25,7 +25,7 @@ const initialState: State = {
     /**
      * 全製作為稀有產物
      */
-    toRare: true,
+    toRare: false,
     /**
      * 原料消耗量
      */

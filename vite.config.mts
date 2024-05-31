@@ -9,13 +9,21 @@ import ViteFonts from 'unplugin-fonts/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/bdo-calculator' : '',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: true,
+  },
   plugins: [
     dynamicImport(),
     tsconfigPaths(),
     Vue({
       template: { transformAssetUrls },
     }),
-    Vuetify(),
+    Vuetify({
+      autoImport: true,
+    }),
     ViteFonts({
       google: {
         families: [{

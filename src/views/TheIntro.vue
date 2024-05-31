@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { routePages } from '@/plugins/route';
-import { getIcon } from '@/utils/icons';
+import { pages } from '@/plugins/route';
+import { IconKeys, getIcon } from '@/utils/icons';
 </script>
 
 <template>
@@ -19,20 +19,20 @@ import { getIcon } from '@/utils/icons';
     </div>
     <div class="d-flex justify-center ga-16 my-3">
       <v-card
-        v-for="page in routePages.slice(1)"
+        v-for="page in pages.slice(1)"
         :key="page.title"
         class="d-flex flex-column"
         width="300"
-        :href="page.href"
+        :to="page.path"
       >
         <v-card-title
           tag="h2"
           :class="[
             'mb-2 py-1 font-weight-black',
-            page.color
+            `bg-${page.name}`
           ]"
         >
-          <v-icon :icon="getIcon(page.icon)" />
+          <v-icon :icon="getIcon(page.name as IconKeys)" />
           {{ page.title }}
         </v-card-title>
         <v-card-text
