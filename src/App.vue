@@ -153,6 +153,7 @@ window.addEventListener('beforeunload', () => {
               :key="link.name"
               link
               :href="link.href"
+              target="_blank"
             >
               <v-list-item-title
                 class="w-auto text-left"
