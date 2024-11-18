@@ -42,7 +42,7 @@ const rareProd = reactive<{
 watch(rareProd, (newVals) => {
   if (!newVals.show) {
     alchemyState.updateRareProd();
-    return; 
+    return;
   }
   alchemyState.updateRareProd(
     {
@@ -156,7 +156,7 @@ watch(
 
 const clickSetCrafts = () => {
   Object.assign(craftsState, { show: !craftsState.show });
-  if (!craftsState.show) 
+  if (!craftsState.show)
     alchemyState.setCrafts(rawRequiredNum.value.map((obj) => obj.value));
 };
 
@@ -300,12 +300,12 @@ const alchemyReqRawData = computed(() => {
 
       <v-divider
         v-once
-        vertical 
+        vertical
         thickness="2"
         opacity="1"
         color="surface"
       />
-        
+
       <!-- col 2 -->
       <v-col
         class="column-flow h-100"
@@ -317,7 +317,7 @@ const alchemyReqRawData = computed(() => {
           color="alchemy-lighten-1"
           rounded="0"
         />
-        <v-sheet 
+        <v-sheet
           class="flex-1-1 px-4 bg-transparent text-center"
         >
           <AlchemyRaw
@@ -326,22 +326,22 @@ const alchemyReqRawData = computed(() => {
             :idx="i"
             :raw="raw"
           />
-          <CommonBtn 
+          <CommonBtn
             type="append"
             @click="alchemyState.appendRaw"
             :disabled="current.raw.length >= 5"
           />
         </v-sheet>
       </v-col>
-  
+
       <v-divider
         v-once
-        vertical 
+        vertical
         thickness="3"
         opacity="1"
         color="surface"
       />
-        
+
       <!-- col 3 -->
       <v-col
         class="column-flow h-100"
@@ -354,7 +354,7 @@ const alchemyReqRawData = computed(() => {
           color="alchemy-lighten-1"
           rounded="0"
         />
-          
+
         <div
           class="column-flow flex-1-1 ga-3 px-2 py-3 overflow-y-auto"
           style="height: 0;"
@@ -378,7 +378,7 @@ const alchemyReqRawData = computed(() => {
       >
         {{ act.text }}
         <v-tooltip
-          v-if="act.tooltip" 
+          v-if="act.tooltip"
           :text="act.tooltip"
           activator="parent"
           location="bottom"
@@ -407,7 +407,7 @@ const alchemyReqRawData = computed(() => {
         儲存
       </v-btn>
     </v-btn-group>
-    <TheDialog 
+    <TheDialog
       v-if="btnActionState.show"
       v-memo="[btnActionState.show]"
       :title="btnActionState.type === 'save' ? '儲存最愛' : '覆蓋表單?'"
@@ -419,11 +419,11 @@ const alchemyReqRawData = computed(() => {
       v-model="btnActionState.show"
       @confirm="btnActionState.callback()"
     />
-    <TheDialog 
-      v-if="craftsState.show"
+    <TheDialog
       title="製作次數"
       :model-value="craftsState.show"
       @update:model-value="clickSetCrafts"
+      :eager="true"
     >
       <DataTable
         class="pa-0"
