@@ -17,7 +17,7 @@ defineEmits<{
 <template>
   <v-combobox
     label="名稱"
-    maxlength="15"
+    maxlength="20"
     :items="npcItem"
     item-title="name"
     v-model="model"
