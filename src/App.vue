@@ -38,7 +38,7 @@ router.beforeEach((to) => {
   // 首頁為`rail`方式，完整 <--> 縮小到剩icon
   // 其他頁以temporary，完整+overlay <--> 完全收起(看不見)
   const isHome = to.path === '/';
-  Object.assign(navDrawerState, { 
+  Object.assign(navDrawerState, {
     temporary: !isHome,
     model: isHome,
   });
@@ -118,34 +118,25 @@ window.addEventListener('beforeunload', () => {
           :prepend-icon="page.name && getIcon(page.name as IconKeys)"
         >
           <v-list-item-title
-            class="w-auto text-left"
+            class="w-auto text-left text-body-1 font-weight-bold"
           >
-            <label
-              class="text-body-1 font-weight-bold"
-            >
-              {{ page.title }}
-            </label>
+            {{ page.title }}
           </v-list-item-title>
         </v-list-item>
         <v-list-item
           tag="button"
-          id="link"
+          id="links"
           :prepend-icon="getIcon('link')"
         >
           <v-list-item-title
-            class="w-auto text-left"
+            class="w-auto text-left text-body-1 font-weight-bold"
           >
-            <label
-              class="text-body-1 font-weight-bold"
-            >
-              相關連結
-            </label>
+            相關連結
           </v-list-item-title>
         </v-list-item>
         <v-menu
-          open-on-hover
           location="end"
-          activator="#link"
+          activator="#links"
         >
           <v-list>
             <v-list-item
