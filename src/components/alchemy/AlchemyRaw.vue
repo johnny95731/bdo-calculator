@@ -2,7 +2,7 @@
 import ItemName from '@/components/ItemName.vue';
 import CommonBtn from '@/components/CommonBtn.vue';
 import DataBlock from '@/components/DataBlock.vue';
-import useAlchemyStore from 'stores/useAlchemyStore';
+import useAlchemyStore from '~/features/stores/useAlchemyStore';
 import type { Raw } from '@/features/types/alchemyType';
 
 type Props = {

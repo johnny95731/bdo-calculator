@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { calcSuccessRate, calcProfitMargin, calcAvgYield } from '@/utils/bdo';
-import { storage } from '@/utils/helpers';
+import { storage } from 'utils/localstorage_';
 import type { Character } from 'types/characterType';
 
 // Dynamic import to avoid cross import error.
-const useProcessingStore = () => import('./useProcessingStore.ts');
-const useAlchemyStore = () => import('./useAlchemyStore.ts');
+const useProcessingStore = () => import('./useProcessingStore');
+const useAlchemyStore = () => import('./useAlchemyStore');
 
 // 角色
 /**
@@ -13,34 +13,29 @@ const useAlchemyStore = () => import('./useAlchemyStore.ts');
  */
 const CHARACTER_KEY = 'character';
 
-/**
- * 資料庫儲存的設定
- */
-const storageCharacter = storage.get(CHARACTER_KEY) as null | Character;
-/**
- * 初始角色基礎素質
- */
-export const initialState: Character = Object.assign(
-  { // 首次載入預設值
-    extraSuccessRate: 43,
-    crafts: 150,
-    valuePack: true,
-    bonusValue: 0,
-    alchemy: {
-      time: 1.1,
-      extractMaxRate: 26.6,
-    }
-  } as Character,
-  storageCharacter || {}
-);
-
-export const evaluated = {
-  profitMargin: calcProfitMargin(initialState),
-  craft: calcSuccessRate(initialState) * initialState.crafts
+const getStorageData = () => {
+  return storage.getItem<Character>(CHARACTER_KEY);
 };
 
 const useCharacterStore = defineStore('Character', {
-  state: () => initialState,
+  state: () => {
+    const storageCharacter = getStorageData();
+    // 使用Object.assign，新增property時，直接修改預設值即可
+    const initialState: Character = Object.assign(
+      { // 首次載入預設值
+        extraSuccessRate: 43,
+        crafts: 150,
+        valuePack: true,
+        bonusValue: 0,
+        alchemy: {
+          time: 1.1,
+          extractMaxRate: 26.6,
+        }
+      } as Character,
+      storageCharacter || {}
+    );
+    return initialState;
+  },
   getters: {
     /**
      * 實際領取額(>0.65)。
@@ -76,13 +71,13 @@ const useCharacterStore = defineStore('Character', {
   actions: {
     updateStorage() {
       // 角色
-      storage.set(CHARACTER_KEY, this.$state);
+      storage.setItem(CHARACTER_KEY, this.$state);
     },
     updateCharacter(
       attr: keyof Omit<Character, 'alchemy' | 'cooking'> | `alchemy.${keyof Character['alchemy']}`,
       newVal: number | string | boolean,
     ) {
-      const keys = attr.split('.') as 
+      const keys = attr.split('.') as
         [keyof Omit<Character, 'alchemy' | 'cooking'>] |
         ['alchemy', keyof Character['alchemy']];
       if (keys[0] === 'alchemy') {

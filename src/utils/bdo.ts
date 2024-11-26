@@ -1,7 +1,7 @@
 import { deepCopy, round, sumAlongAttr } from './helpers';
 // Types
 import type{
-  FavBasicInfo, FavMaterial, ProcessingRecipe, Product, ReqProductInfo
+  ReqProcessingInfo, FavProcessingInfo, ProcessingInfo, Product, ReqProductInfo
 } from '@/features/types/processingType';
 import type { Character } from '@/features/types/characterType';
 import type { Goods, HourlyStats, ReqGoods } from '@/features/types/commonType';
@@ -32,7 +32,7 @@ export const calcSuccessRate = (
 /**
  * 計算總利潤
  * @param goods
- * @returns 
+ * @returns
  */
 export const totalProfit = (
   goods: Goods[]
@@ -53,7 +53,7 @@ export const calcGoods = <T extends ReqGoods>(
 
 
 // 加工
-const getReqProductInfo = (product: Product[]): ReqProductInfo[] => (
+const getReqProductInfo = <T extends ReqProductInfo[]>(product: T): ReqProductInfo[] => (
   product.map((obj) => ({
     name: obj.name,
     raw: obj.raw.map(r => ({ ...r })),
@@ -64,15 +64,14 @@ const getReqProductInfo = (product: Product[]): ReqProductInfo[] => (
 );
 /**
  * Get basic info for setting to storage.
- * @param material 
- * @returns 
+ * @param material
+ * @returns
  */
 export const getBasicInfo = (
-  material: FavMaterial | ProcessingRecipe
-): Omit<FavBasicInfo, 'name'> & Partial<FavBasicInfo> => {
+  material: FavProcessingInfo | ProcessingInfo
+): Omit<ReqProcessingInfo, 'name'> & Partial<ReqProcessingInfo> => {
   // 表單上無名稱。我的最愛有名稱
   return {
-    // @ts-expect-error
     ...(material.name && { name: material.name }),
     raw: material.raw.map((obj) => ({
       name: obj.name,

@@ -23,6 +23,13 @@ import { processingExample } from '@/utils/examples';
 // Keys
 import type { tier2HourlyStats } from '@/features/types/processingType';
 
+useSeoMeta({
+  title: '黑色沙漠交易所計算機 - 加工',
+  ogTitle: '黑色沙漠交易所計算機 - 加工',
+  description: '計算黑色沙漠中加工及產生的利潤、時間以及產量等，並可透過產物需求量估計原料需求量。',
+  ogDescription: '計算黑色沙漠中加工及產生的利潤、時間以及產量等，並可透過產物需求量估計原料需求量。',
+});
+
 const windowItemClass = {
   panel: 'h-100 px-4 py-3',
 };
@@ -69,61 +76,6 @@ const tier1HourlyInfo = computed(() => {
 const tier2HourlyInfo = computed(() => {
   return processingState.hourly(-1, 2) as Required<tier2HourlyStats>[];
 });
-
-// const btnActionState = reactive<{
-//   show: boolean,
-//   isSaving: boolean,
-//   data?: ProcessingExampleKey,
-//   callback: (arg?: string) => void,
-//     }>({
-//       show: false,
-//       isSaving: false,
-//       data: 'wood',
-//       callback: () => {}
-//     });
-// function clickBtn(data?: ProcessingExampleKey) {
-//   const isSaving = !!data;
-//   Object.assign(btnActionState, {
-//     show: true,
-//     isSaving,
-//     data,
-//     callback: isSaving ? handleSaveComfirm : handleExampleConfirm,
-//   });
-// }
-
-// // 使用範例(覆蓋表格)
-// const exampleActions = [
-//   {
-//     text: '範例一',
-//     target: 'wood'
-//   },
-//   {
-//     text: '範例二',
-//     target: 'alloy'
-//   },
-//   {
-//     text: '清空',
-//     target: 'empty'
-//   },
-// ] as const;
-// function handleExampleConfirm() {
-//   processingState.overrideCurrent(btnActionState.data as ProcessingExampleKey);
-//   Object.assign(btnActionState, { show: false });
-// }
-
-// // 儲存表單
-// const favName = ref(processingState.tier2[0].name);
-// watch(
-//   () => processingState.tier2[0]?.name,
-//   (newVal, oldVal) => {
-//     if (!newVal) return;
-//     if (!favName.value || oldVal === favName.value) favName.value = newVal;
-//   }
-// );
-// function handleSaveComfirm() {
-//   processingState.appendFav(favName.value);
-//   Object.assign(btnActionState, { show: false });
-// }
 
 // // 使用範例(覆蓋表格)
 const exampleConfirm = reactive<{
@@ -200,22 +152,21 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
         class="column-flow"
       >
         <RegionHeader
-          v-memo="[page]"
           tag="h3"
           :title="pageTitle"
           color="processing-lighten-1"
           rounded="0"
         />
         <v-window
+          v-model="page"
           class="flex-1-1 overflow-y-scroll"
           style="height: 0;"
-          v-model="page"
         >
           <v-window-item
             :class="windowItemClass.panel"
             :value="1"
           >
-            <v-sheet 
+            <v-sheet
               class="bg-transparent text-center"
               rounded="lg"
             >
@@ -226,9 +177,9 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
                 :idx="i"
               />
               <CommonBtn
-                type="append" 
-                @click="processingState.appendGoods(0)"
+                type="append"
                 :disabled="processingState.raw.length >= 25"
+                @click="processingState.appendGoods(0)"
               />
             </v-sheet>
           </v-window-item>
@@ -236,7 +187,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
             :class="windowItemClass.panel"
             :value="2"
           >
-            <v-sheet 
+            <v-sheet
               class="rounded-lg bg-brown-lighten-4 text-center"
             >
               <TheProduct
@@ -250,9 +201,9 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
                 :selectedRaws="selectedRaws"
               />
               <CommonBtn
-                type="append" 
-                @click="processingState.appendGoods(1)"
+                type="append"
                 :disabled="processingState.tier1.length >= 10"
+                @click="processingState.appendGoods(1)"
               />
             </v-sheet>
           </v-window-item>
@@ -260,7 +211,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
             :class="windowItemClass.panel"
             :value="3"
           >
-            <v-sheet 
+            <v-sheet
               class="rounded-lg bg-transparent text-center"
             >
               <TheProduct
@@ -274,9 +225,9 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
                 :selectedRaws="selectedRawNTier1"
               />
               <CommonBtn
-                type="append" 
-                @click="processingState.appendGoods(2)"
+                type="append"
                 :disabled="processingState.tier2.length >= 5"
+                @click="processingState.appendGoods(2)"
               />
             </v-sheet>
           </v-window-item>
@@ -317,7 +268,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
 
       <v-divider
         v-once
-        vertical 
+        vertical
         thickness="3"
         opacity="1"
         color="surface"
@@ -329,7 +280,6 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
         cols="3"
       >
         <RegionHeader
-          v-once
           tag="h3"
           title="結果"
           color="processing-lighten-1"
@@ -359,7 +309,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
       >
         {{ act.text }}
         <v-tooltip
-          v-if="act.target !== 'empty'" 
+          v-if="act.target !== 'empty'"
           :text="processingExample[act.target].name"
           activator="parent"
           location="bottom"
@@ -378,88 +328,30 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
         儲存
       </v-btn>
     </v-btn-group>
-    <TheDialog 
+    <TheDialog
       v-if="exampleConfirm.show"
+      v-model="exampleConfirm.show"
       title="覆蓋表單?"
       :text="`範例 ${processingExample[exampleConfirm.example].name}`"
-      v-model="exampleConfirm.show"
       @confirm="handleExampleConfirm()"
     />
-    <TheDialog 
+    <TheDialog
       v-if="saveFavConfirm"
-      title="儲存最愛"
       v-model="saveFavConfirm"
+      title="儲存最愛"
       :confirm-disabled="favName.length === 0"
       @confirm="handleSaveComfirm()"
     >
       <v-text-field
-        label="名稱"
         v-model="favName"
+        label="名稱"
       />
     </TheDialog>
-    <!-- <v-btn-group
-      v-once
-      class="flex-0-0 ga-5 px-4 py-2 bg-processing"
-      variant="text"
-      rounded="b-lg t-0"
-    >
-      <v-btn
-        v-for="act in exampleActions"
-        :key="act.target"
-        prepend-icon="mdi-broom"
-        rounded="lg"
-        @click="clickBtn(act.target)"
-      >
-        {{ act.text }}
-        <v-tooltip
-          :text="processingExample[act.target].name"
-          activator="parent"
-          location="bottom"
-        />
-      </v-btn>
-      <v-spacer />
-      <v-btn
-        prepend-icon="mdi-knob"
-        density="compact"
-        rounded="lg"
-        variant="elevated"
-        base-color="processing-darken-1"
-      >
-        製作次數
-      </v-btn>
-      <v-btn
-        prepend-icon="mdi-file"
-        density="compact"
-        rounded="lg"
-        variant="elevated"
-        base-color="processing-darken-1"
-        @click="clickBtn()"
-      >
-        儲存
-      </v-btn>
-    </v-btn-group>
-    <TheDialog 
-      v-if="btnActionState.show"
-      :title="btnActionState.isSaving ? '儲存最愛' : '覆蓋表單?'"
-      :text="
-        btnActionState.isSaving ?
-          undefined :
-          `範例 ${processingExample[btnActionState.data as ProcessingExampleKey].name}`
-      "
-      v-model="btnActionState.show"
-      @confirm="btnActionState.callback()"
-    >
-      <v-text-field
-        v-if="btnActionState.isSaving"
-        label="名稱"
-        v-model="favName"
-      />
-    </TheDialog> -->
   </section>
   <v-lazy
     tag="section"
     :min-height="400"
-    :options="{'threshold': 0.5}"
+    :options="{'threshold': 0.2}"
     transition="fade-transition"
   >
     <MPFavs class="full-height column-flow" />
@@ -483,46 +375,46 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
       >
         <v-col class="d-flex align-center ga-3 px-5 pt-4 pb-2 rounded-xl bg-surface">
           <v-text-field
+            v-model="inverseMethodTier2.demand"
             label="產量需求"
             density="compact"
             type="number"
             inputmode="decimal"
             min="1"
-            v-model="inverseMethodTier2.demand"
           />
           <v-text-field
+            v-model="inverseMethodTier2.avgyield"
             label="二階加工產量"
             density="compact"
             type="number"
             inputmode="decimal"
             min="1"
             step="any"
-            v-model="inverseMethodTier2.avgyield"
           />
           <v-text-field
+            v-model="inverseMethodTier2.consumption"
             label="一階原料消耗量"
             density="compact"
             type="number"
             inputmode="decimal"
             min="1"
-            v-model="inverseMethodTier2.consumption"
           />
           <v-text-field
+            v-model="inverseMethodTier1.avgyield"
             label="一階加工產量"
             density="compact"
             type="number"
             inputmode="decimal"
             min="1"
             step="any"
-            v-model="inverseMethodTier1.avgyield"
           />
           <v-text-field
+            v-model="inverseMethodTier1.consumption"
             label="基本材料消耗量"
             density="compact"
             type="number"
             inputmode="decimal"
             min="1"
-            v-model="inverseMethodTier1.consumption"
           />
         </v-col>
         <v-col

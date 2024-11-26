@@ -13,11 +13,11 @@ const model = defineModel<boolean>({
 
 <template>
   <v-dialog
+    v-model="model"
     width="450px"
     max-width="100vw"
     height="600px"
     max-height="100vh"
-    v-model="model"
   >
     <div class="column-flow h-100 w-100">
       <RegionHeader

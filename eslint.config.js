@@ -1,9 +1,10 @@
+import withNuxt from './.nuxt/eslint.config.mjs';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import pluginVue from 'eslint-plugin-vue';
 
 
-export default [
+export default withNuxt(...[
   { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
@@ -23,6 +24,8 @@ export default [
       'valid-jsdoc': 'off',
       'func-call-spacing': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
+      'import/first': 'off',
+      'vue/no-multiple-template-root': 'off',
       'vue/attribute-hyphenation': 'off',
       'vue/v-on-event-hyphenation': 'off',
       'vue/valid-v-slot': [
@@ -33,5 +36,14 @@ export default [
       ],
       'vue/require-default-prop': 'off',
     },
+  },
+  {
+    files: [
+      'src/{layouts,components}/{index,default}.vue',
+      'src/views/**.vue',
+    ],
+    rules: {
+      'vue/multi-word-component-names': 'off'
+    }
   }
-];
+]);

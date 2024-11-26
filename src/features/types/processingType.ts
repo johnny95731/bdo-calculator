@@ -1,4 +1,4 @@
-import { Goods, HourlyStats, ReqGoods } from 'types/commonType.ts';
+import type { Goods, HourlyStats, ReqGoods } from 'types/commonType.ts';
 
 /**
  * 產品基礎數值
@@ -56,10 +56,24 @@ export type tier2HourlyStats = HourlyStats & {
   costFromRaw: number;
 }
 
+
 /**
- * 原料到二次加工產物的基礎數值。
+ * 基礎加工配方資訊
  */
-export type ProcessingRecipe = {
+export type ReqProcessingInfo = {
+  raw: ReqGoods[],
+  tier1: ReqProductInfo[],
+  tier2: ReqProductInfo[],
+}
+
+/**
+ * 加工配方，包含透過持有數量計算出的期望產物量。
+ */
+export type ProcessingInfo = {
+  /**
+   * 配方名稱
+   */
+  name?: string,
   /**
    * 未加工原料
    */
@@ -74,28 +88,17 @@ export type ProcessingRecipe = {
   tier2: Product[],
 }
 
+
 /**
- * 我的最愛在資料庫的儲存格式
+ * 我的最愛儲存的加工配方
  */
-export type FavBasicInfo = {
-  /**
-   * 儲存我的最愛名稱
-   */
-  name: string,
-  raw: ReqGoods[],
-  tier1: ReqProductInfo[],
-  tier2: ReqProductInfo[],
-}
-/**
- * 我的最愛材料
- */
-export type FavMaterial = ProcessingRecipe & {
+export type FavProcessingInfo = ReqProcessingInfo & {
   /**
    * 我的最愛名稱
    */
   name: string,
 }
 
-export type State = ProcessingRecipe & {
-  recipes: FavMaterial[],
+export type State = ProcessingInfo & {
+  recipes: Required<ProcessingInfo>[],
 }

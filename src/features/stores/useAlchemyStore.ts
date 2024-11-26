@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
-import useCharacterStore, {
-  evaluated, initialState as initCharacter,
-} from './useCharacterStore.ts';
+import useCharacterStore from './useCharacterStore.ts';
 import { alchemyExample } from '@/utils/examples';
 import { calcAvgYield, calcGoods } from '@/utils/bdo';
-import { deepCopy, getLastItem, storage, sumAlongAttr } from '@/utils/helpers.ts';
+import { deepCopy, getLastItem, sumAlongAttr } from '@/utils/helpers';
+import { storage } from 'utils/localstorage_';
 import type { AlchemyExampleKey } from '@/utils/examples';
 import type {
   AlchemyHourlyStats, AlchemyRecipe, ReqAlchemyRecipeInfo, ReqRawInfo, State
@@ -57,10 +56,11 @@ const getStorageInfo = (recipe: AlchemyRecipe): ReqAlchemyRecipeInfo => {
     })),
     yieldRange: recipe.yieldRange,
   };
-  recipe.rareProd && (reqInfos.rareProd = {
-    price: recipe.rareProd.price,
-    rate: recipe.rareProd.rate,
-  });
+  if (recipe.rareProd)
+    reqInfos.rareProd = {
+      price: recipe.rareProd.price,
+      rate: recipe.rareProd.rate,
+    };
   return reqInfos;
 };
 
@@ -97,33 +97,44 @@ const STORAGE_KEY = {
   fav: 'alchemyFav',
 } as const;
 
-// 取得初始值
-let currentRecipe: ReqAlchemyRecipeInfo | AlchemyRecipe = (
-  storage.get(STORAGE_KEY.current, alchemyExample.elixir) as ReqAlchemyRecipeInfo
-);
-currentRecipe = newAlchemyRecipe(
-  evaluated.profitMargin,
-  initCharacter.alchemy.extractMaxRate,
-  initCharacter.alchemy.time,
-  currentRecipe
-);
-
-const initialState: State = {
-  current: currentRecipe as AlchemyRecipe,
-  recipes: Object.values(alchemyExample).map((obj) => 
-    newAlchemyRecipe(
-      evaluated.profitMargin,
-      initCharacter.alchemy.extractMaxRate,
-      initCharacter.alchemy.time,
-      obj
-    )
-  ),
-  // currentSimple: alchemyExample.normalElixir,
-  // simpleAlchemy: [],
+function getStorageData(key?: 'current'): ReqAlchemyRecipeInfo
+function getStorageData(key: 'fav'): ReqAlchemyRecipeInfo[]
+function getStorageData(key: 'current' | 'fav' = 'current') {
+  if (key === 'fav')
+    return storage.getItem<ReqAlchemyRecipeInfo[]>(
+      STORAGE_KEY.fav, Object.values(alchemyExample)
+    );
+  return storage.getItem<ReqAlchemyRecipeInfo>(STORAGE_KEY.current, alchemyExample.elixir);
 };
 
 const useAlchemyStore = defineStore('Alchemy', {
-  state: () => initialState,
+  state: () => {
+    const { profitMargin, alchemy } = useCharacterStore();
+    // current recipes
+    const current = newAlchemyRecipe(
+      profitMargin,
+      alchemy.extractMaxRate,
+      alchemy.time,
+      getStorageData()
+    );
+    // favorite recipes
+    const recipes = getStorageData('fav').map((obj) =>
+      newAlchemyRecipe(
+        profitMargin,
+        alchemy.extractMaxRate,
+        alchemy.time,
+        obj
+      )
+    );
+
+    const initialState: State = {
+      current,
+      recipes,
+      // currentSimple: alchemyExample.normalElixir,
+      // simpleAlchemy: [],
+    };
+    return initialState;
+  },
   actions: {
     newAlchemyRecipe(
       recipe: ReqAlchemyRecipeInfo
@@ -151,7 +162,7 @@ const useAlchemyStore = defineStore('Alchemy', {
       const { profit } = useCharacterStore();
       const recipe = idx === -1 ? this.current : this.recipes[idx];
       const prod = profit(recipe.num * recipe.price);
-      const rareProd = recipe.rareProd ? 
+      const rareProd = recipe.rareProd ?
         profit(recipe.rareProd.num * recipe.rareProd.price):
         0;
       return {
@@ -166,7 +177,7 @@ const useAlchemyStore = defineStore('Alchemy', {
       const { profit, alchemyHourlyCrafts } = useCharacterStore();
       const hourlyCraft = alchemyHourlyCrafts;
       const yield_ = recipe.avgYield * hourlyCraft;
-      const rareProd = recipe.rareProd && 
+      const rareProd = recipe.rareProd &&
         {
           profit: profit(
             recipe.rareProd.rate * hourlyCraft * recipe.rareProd.price
@@ -218,9 +229,9 @@ const useAlchemyStore = defineStore('Alchemy', {
     // 資料庫更新
     updateStorage() {
       const current = getStorageInfo(this.current);
-      storage.set(STORAGE_KEY.current, JSON.stringify(current));
+      storage.setItem(STORAGE_KEY.current, current);
       const fav = this.recipes.map(favObj => getStorageInfo(favObj));
-      storage.set(STORAGE_KEY.fav, JSON.stringify(fav));
+      storage.setItem(STORAGE_KEY.fav, fav);
     },
     // 新增
     appendRaw() {
@@ -235,9 +246,9 @@ const useAlchemyStore = defineStore('Alchemy', {
       this.refresh();
     },
     updateRecipe(attr: keyof ReqAlchemyRecipeInfo, newVal: string, idx?: 0 | 1) {
-      if (attr === 'yieldRange') 
+      if (attr === 'yieldRange')
         this.current.yieldRange[idx ?? 0] = Number(newVal);
-      else 
+      else
         Object.assign(this.current, {
           [attr]: attr === 'name' ? newVal : Number(newVal)
         });

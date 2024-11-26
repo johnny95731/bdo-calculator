@@ -11,11 +11,12 @@ const AlchemyResult = defineAsyncComponent({
   loader: () => import('./AlchemyResult.vue')
 });
 // Stores and utils
-import useCharacterStore from 'stores/useCharacterStore';
-import useAlchemyStore from 'stores/useAlchemyStore';
+import useCharacterStore from '~/features/stores/useCharacterStore';
+import useAlchemyStore from '~/features/stores/useAlchemyStore';
 import { numFormat } from '@/utils/helpers';
-import { getIcon, IconKeys } from '@/utils/icons';
+import { getIcon } from '@/utils/icons';
 import type { VDataTable } from 'vuetify/lib/components/index.mjs';
+import type { IconKeys } from '@/utils/icons';
 
 const characterState = useCharacterStore();
 const alchemyState = useAlchemyStore();
@@ -167,7 +168,6 @@ const actions: {
             :key="column.title"
             :colspan="column.children ? 2 : 1"
             :rowSpan="column.children ? 1 : 2"
-            @click.stop="prop.toggleSort(column)"
             :class="[
               'v-data-table-column--align-center',
               'v-data-table__th',
@@ -179,6 +179,7 @@ const actions: {
               width: column.width,
               borderLeft: i === 0 ? 'none' : undefined,
             }"
+            @click.stop="prop.toggleSort(column)"
           >
             <span>{{ column.title }}</span>
             <v-icon
@@ -199,7 +200,6 @@ const actions: {
             :key="column.title"
             colspan="1"
             :rowSpan="1"
-            @click.stop="prop.toggleSort(column)"
             :class="[
               'v-data-table-column--align-center',
               'v-data-table__th',
@@ -210,6 +210,7 @@ const actions: {
             :style="{
               width: column.width
             }"
+            @click.stop="prop.toggleSort(column)"
           >
             <span>{{ column.title }}</span>
             <v-icon

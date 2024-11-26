@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import npcItem_ from '@/utils/npcSellingItems.json';
+import npcItem_ from '@/assets/npcSellingItems.json';
 
 const npcItem = npcItem_.map((item) => {
   return {
@@ -16,11 +16,11 @@ defineEmits<{
 
 <template>
   <v-combobox
+    v-model="model"
     label="名稱"
     maxlength="20"
     :items="npcItem"
     item-title="name"
-    v-model="model"
     @change="$emit('change', model || '')"
   >
     <template #item="{ item }">

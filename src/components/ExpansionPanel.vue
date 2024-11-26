@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { getIcon } from '@/utils/icons';
 
 type Props = {
@@ -11,7 +11,6 @@ type Props = {
   class?: string,
   btnClass?: string,
   textClass?: string,
-  expand?: boolean,
   absolute?: boolean,
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -23,16 +22,12 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: undefined,
   btnClass: undefined,
   textClass: 'bg-surface',
-  expand: false,
   absolute: false,
 });
 
 const isHovering = ref(false);
 // 展開panel
-const expand_ = ref(props.expand);
-watch(() => props.expand, (newVal) => {
-  expand_.value = newVal;
-});
+const expand = defineModel<boolean>('expand', { default: true });
 
 const btnClass_ = computed(() => {
   let css: string = '';
@@ -41,7 +36,7 @@ const btnClass_ = computed(() => {
 });
 const rounded = computed(() => {
   if (props.rounded) {
-    return expand_.value ? 
+    return expand.value ?
       `rounded-t-${props.rounded}` :
       `rounded-${props.rounded}`;
   } else return '';
@@ -73,8 +68,8 @@ const textClass_ = computed(() => {
     ]"
   >
     <v-hover
-      @update:model-value="isHovering = $event"
       v-slot="{ props: hoverProps }"
+      @update:model-value="isHovering = $event"
     >
       <button
         v-bind="hoverProps"
@@ -84,7 +79,7 @@ const textClass_ = computed(() => {
           rounded,
         ]"
         type="button"
-        @click="expand_ = !expand_"
+        @click="expand = !expand"
       >
         <div
           :class="[
@@ -98,10 +93,9 @@ const textClass_ = computed(() => {
           </div>
         </slot>
         <v-icon
-          v-memo="[expand_]"
           :class="[
             'chevron flex-0-0',
-            expand_ ? 'rotate' : '',
+            expand ? 'rotate' : '',
             props.rounded === 'shaped' ? 'mr-3' : 0,
           ]"
           :icon="getIcon('expandable')"
@@ -111,12 +105,12 @@ const textClass_ = computed(() => {
     </v-hover>
     <v-expand-transition>
       <div
+        v-show="expand"
         :class="[
           'content pa-2',
           textClass_,
           props.absolute ? 'absolute' : ''
         ]"
-        v-show="expand_"
       >
         <slot />
         <slot name="text" />

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
-import type { State } from 'types/inverseMethodType';
 import useCharacterStore from './useCharacterStore';
+import type { State } from 'types/inverseMethodType';
 
 const initialState: State = {
   processing: {

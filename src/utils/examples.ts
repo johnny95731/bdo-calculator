@@ -1,9 +1,9 @@
 import type { ReqAlchemyRecipeInfo } from '@/features/types/alchemyType';
-import type { FavBasicInfo } from '@/features/types/processingType';
+import type { FavProcessingInfo } from '@/features/types/processingType';
 
 
 // 加工
-const emptyMaterial: FavBasicInfo = {
+const emptyMaterial: FavProcessingInfo = {
   name: '空白',
   raw: [
     { name: '基本材料', price: 1000, cost: 0, num: 10000 },
@@ -28,7 +28,7 @@ const emptyMaterial: FavBasicInfo = {
   ]
 };
 
-const ashPlywood: FavBasicInfo = {
+const ashPlywood: FavProcessingInfo = {
   name: '白蠟樹合板',
   raw: [
     { name: '白蠟樹原木', price: 1400, cost: 0, num: 10000 },
@@ -59,7 +59,7 @@ const ashPlywood: FavBasicInfo = {
   ],
 };
 
-const brassIngot: FavBasicInfo = {
+const brassIngot: FavProcessingInfo = {
   name: '黃銅鑄塊',
   raw: [
     { name: '銅礦石', price: 1120, cost: 1120, num: 10000 },
@@ -151,7 +151,7 @@ const purePowderReagent: ReqAlchemyRecipeInfo = {
   ],
 } as const;
 
-const elixirOfLife: Required<ReqAlchemyRecipeInfo> = {
+const elixirOfLife: ReqAlchemyRecipeInfo = {
   name: '生命力的秘藥',
   price: 35000,
   yieldRange: [1, 4],

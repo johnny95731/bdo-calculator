@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import ExpansionPanel from '@/components/ExpansionPanel.vue';
 import DataTable from '@/components/DataTable.vue';
-import useAlchemyStore from 'stores/useAlchemyStore';
-import useCharacterStore from 'stores/useCharacterStore';
+import useAlchemyStore from '~/features/stores/useAlchemyStore';
+import useCharacterStore from '~/features/stores/useCharacterStore';
 import { numFormat, round } from '@/utils/helpers';
 
 type Props = {
@@ -14,7 +14,7 @@ const props = defineProps<Props>();
 const characterState = useCharacterStore();
 const alchemyState = useAlchemyStore();
 
-const recipe = computed(() => 
+const recipe = computed(() =>
   props.idx === -1 ?
     alchemyState.current :
     alchemyState.recipes[props.idx]

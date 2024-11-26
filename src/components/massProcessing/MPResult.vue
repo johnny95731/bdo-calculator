@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import ExpansionPanel from '../ExpansionPanel.vue';
+import DataTable from '../DataTable.vue';
 import useProcessingStore from '@/features/stores/useProcessingStore';
 import type { tier2HourlyStats } from '@/features/types/processingType';
 import { numFormat, sumAlongAttr } from '@/utils/helpers';
-import ExpansionPanel from '../ExpansionPanel.vue';
-import DataTable from '../DataTable.vue';
 
 type Props = {
   idx: number
@@ -139,7 +139,7 @@ const hourlyStats = computed(() => {
     btnClass="px-3 py-1 font-weight-bold"
     textClass="px-3 pb-3 rounded-b-xl bg-surface"
     rounded="xl"
-    expand
+    model:aexpand
   >
     <DataTable
       v-for="(data, i) in totalStats"
@@ -158,7 +158,7 @@ const hourlyStats = computed(() => {
     btnClass="px-3 py-1 font-weight-bold"
     textClass="px-3 pb-3 rounded-b-xl bg-surface"
     rounded="xl"
-    expand
+    model:aexpand
   >
     <DataTable
       v-for="(data, i) in hourlyStats"

@@ -1,19 +1,22 @@
 import { defineStore } from 'pinia';
 // Store and utils
-import useCharacterStore, { evaluated } from './useCharacterStore.ts';
-import { round, deepCopy, removeItemByAttr, storage, getLastItem, sumAlongAttr } from '@/utils/helpers';
+import useCharacterStore from './useCharacterStore';
+import {
+  round, deepCopy, removeItemByAttr, getLastItem, sumAlongAttr
+} from 'utils/helpers';
+import { storage } from 'utils/localstorage_';
 import {
   calcProductInfo, processingHourlyInfo, calcGoods, hourlyCraftsFromRaw,
   getBasicInfo,
-} from '@/utils/bdo';
-import { processingExample } from '@/utils/examples.ts';
+} from 'utils/bdo';
+import { processingExample } from 'utils/examples';
 // Types
 import type {
-  FavBasicInfo, FavMaterial, tier2HourlyStats, ProcessingRecipe,
-  Product, ReqProductInfo, State 
-} from 'types/processingType.ts';
-import type { ProcessingExampleKey } from '@/utils/examples.ts';
-import type { Goods, HourlyStats, ReqGoods } from 'types/commonType.ts';
+  ReqProcessingInfo, FavProcessingInfo, tier2HourlyStats, ProcessingInfo, Product,
+  ReqProductInfo, State
+} from 'types/processingType';
+import type { ProcessingExampleKey } from 'utils/examples';
+import type { Goods, HourlyStats, ReqGoods } from 'types/commonType';
 
 
 const { empty, wood, alloy } = processingExample;
@@ -22,25 +25,24 @@ const { empty, wood, alloy } = processingExample;
 const newMaterial = (
   profitMargin: number,
   craft: number,
-  rawInfo: ReqGoods[],
-  tier1Info: ReqProductInfo[],
-  tier2Info: ReqProductInfo[],
-): ProcessingRecipe => {
-  const raws = rawInfo.map((obj) => calcGoods(profitMargin, obj));
-  const tier1s = calcProductInfo(profitMargin, craft, rawInfo, tier1Info);
+  reqInfo: ReqProcessingInfo,
+): ProcessingInfo => {;
+  const { raw, tier1, tier2 } = reqInfo;
+  const raws = raw.map((obj) => calcGoods(profitMargin, obj));
+  const tier1s = calcProductInfo(profitMargin, craft, raw, tier1);
   return {
     raw: raws,
     tier1: tier1s,
     tier2: calcProductInfo(
-      profitMargin, craft, rawInfo.concat(tier1s), tier2Info
+      profitMargin, craft, raw.concat(tier1s), tier2
     )
   };
 };
 
-function getGoods(recipe: FavBasicInfo, tier: 0 | 1 | 2): ReqGoods[] | ReqProductInfo[];
-function getGoods(recipe: ProcessingRecipe, tier: 0 | 1 | 2): Goods[] | Product[];
+function getGoods(recipe: ReqProcessingInfo, tier: 0 | 1 | 2): ReqGoods[] | ReqProductInfo[];
+function getGoods(recipe: ProcessingInfo, tier: 0 | 1 | 2): Goods[] | Product[];
 function getGoods<
-  T extends Omit<FavBasicInfo, 'name'> | ProcessingRecipe
+  T extends Omit<ReqProcessingInfo, 'name'> | ProcessingInfo
 >(recipe: T, tier: 0 | 1 | 2) {
   return (
     tier === 0 ? recipe.raw :
@@ -49,63 +51,47 @@ function getGoods<
   );
 }
 
-
 const STORAGE_KEY = {
   current: 'mpCurrent',
   fav: 'mpFav',
 } as const;
 
-const { profitMargin, craft } = evaluated;
-
-// 取得初始值
-let currentMaterial: Omit<FavBasicInfo, 'name'> | ProcessingRecipe = (
-  storage.get(STORAGE_KEY.current, wood) as Omit<FavBasicInfo, 'name'>
-);
-currentMaterial = newMaterial(
-  profitMargin,
-  craft,
-  currentMaterial.raw,
-  currentMaterial.tier1,
-  currentMaterial.tier2
-);
-
-let favMaterials: FavMaterial[] = storage.get(STORAGE_KEY.fav, [
-  wood, alloy,
-]);
-favMaterials = favMaterials.map(obj => Object.assign(
-  { name: obj.name },
-  newMaterial(
-    profitMargin,
-    craft,
-    obj.raw,
-    obj.tier1,
-    obj.tier2
-  )
-));
-
-const initialState: State = {
-  ...(currentMaterial as ProcessingRecipe),
-  recipes: favMaterials
+function getStorageData(key?: 'current'): ReqProcessingInfo
+function getStorageData(key: 'fav'): FavProcessingInfo[]
+function getStorageData(key: 'current' | 'fav' = 'current') {
+  if (key === 'fav')
+    return storage.getItem<FavProcessingInfo[]>(
+      STORAGE_KEY.fav, [
+        wood, alloy,
+      ]);
+  return storage.getItem<ReqProcessingInfo>(STORAGE_KEY.current, wood);
 };
 
 const useProcessingStore = defineStore('Processing', {
-  state: () => initialState,
+  state: () => {
+    const { profitMargin, avgCraft } = useCharacterStore();
+
+    // 取得初始值
+    const current: ProcessingInfo = newMaterial(profitMargin, avgCraft, getStorageData());
+
+    const recipes: State['recipes'] = getStorageData('fav')
+      .map(obj => Object.assign(
+        { name: obj.name },
+        newMaterial(profitMargin, avgCraft, obj)
+      ));
+
+    const initialState: State = {
+      ...current,
+      recipes
+    };
+    return initialState;
+  },
   actions: {
     newMaterial(
-      { raw, tier1, tier2 }: {
-        raw: ReqGoods[],
-        tier1: ReqProductInfo[],
-        tier2: ReqProductInfo[],
-      }
+      reqInfo : ReqProcessingInfo
     ) {
-      const characterState = useCharacterStore();
-      return newMaterial(
-        characterState.profitMargin,
-        characterState.crafts,
-        raw,
-        tier1,
-        tier2
-      );
+      const {profitMargin, crafts} = useCharacterStore();
+      return newMaterial(profitMargin, crafts, reqInfo);
     },
     getGoods(idx: number, tier: 0 | 1 | 2) {
       const recipe = idx === -1 ? this : this.recipes[idx];
@@ -164,7 +150,7 @@ const useProcessingStore = defineStore('Processing', {
      * 加工完所有原料花費時間(分鐘)
      */
     timeCost(idx: number): [number, number] {
-      const material = idx === -1 ? this : this.recipes[idx];
+      const material = (idx === -1 ? this.$state : this.recipes[idx]) satisfies ProcessingInfo;
       const tier1 = sumAlongAttr(material.tier1, 'timeCost');
       const tier2 = sumAlongAttr(material.tier2, 'timeCost');
       return [round(tier1), round(tier2)];
@@ -190,9 +176,9 @@ const useProcessingStore = defineStore('Processing', {
     // 資料庫更新
     updateStorage() {
       const current = getBasicInfo(this);
-      storage.set(STORAGE_KEY.current, JSON.stringify(current));
+      storage.setItem(STORAGE_KEY.current, current);
       const fav = this.recipes.map(favObj => getBasicInfo(favObj));
-      storage.set(STORAGE_KEY.fav, JSON.stringify(fav));
+      storage.setItem(STORAGE_KEY.fav, fav);
     },
     updateName(tier: 0 | 1 | 2, idx: number, name: string) {
       const [goods, product] = (

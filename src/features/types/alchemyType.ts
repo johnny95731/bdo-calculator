@@ -1,4 +1,4 @@
-import { Goods, HourlyStats } from './commonType';
+import type { Goods, HourlyStats } from './commonType';
 
 /**
  * 煉金原料

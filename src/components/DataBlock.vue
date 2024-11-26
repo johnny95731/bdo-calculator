@@ -85,11 +85,12 @@ const valueClass = computed(() => {
     >
       {{ title }}
     </component>
+    <!-- eslint-disable vue/no-v-html -->
     <span
       v-if="space"
       v-html="space"
     />
-    <div 
+    <div
       v-if="valueText"
       :class="valueClass"
     >

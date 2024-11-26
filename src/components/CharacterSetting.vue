@@ -5,7 +5,7 @@ import { createReusableTemplate } from '@vueuse/core';
 import RegionHeader from './RegionHeader.vue';
 import DataBlock from './DataBlock.vue';
 import ExpansionPanel from './ExpansionPanel.vue';
-import useCharacterStore from 'stores//useCharacterStore';
+import useCharacterStore from '~/features/stores/useCharacterStore';
 import { numFormat, round } from '@/utils/helpers';
 import { calcAvgYield } from '@/utils/bdo';
 import { getIcon } from '@/utils/icons';
@@ -37,7 +37,7 @@ const childAttrs = {
 } as const;
 
 const characterState = useCharacterStore();
-const { 
+const {
   crafts: craft, extraSuccessRate, profitMargin, valuePack, bonusValue,
 } = storeToRefs(characterState);
 const model = defineModel<boolean>();
@@ -80,11 +80,11 @@ const alchemyAvgYields = computed(() => {
   </DefTooltip>
 
   <v-dialog
+    v-model="model"
     width="450px"
     max-width="100vw"
     height="600px"
     max-height="100vh"
-    v-model="model"
   >
     <div class="column-flow h-100 w-100">
       <RegionHeader
@@ -181,7 +181,7 @@ const alchemyAvgYields = computed(() => {
             </div>
           </template>
           <div>
-            <DataBlock 
+            <DataBlock
               v-bind="childAttrs.info"
               title="每小時加工"
               :value="`約 ${numFormat(hourlyCrafts.mid)}份`"
@@ -243,7 +243,7 @@ const alchemyAvgYields = computed(() => {
             </div>
           </template>
           <div>
-            <DataBlock 
+            <DataBlock
               v-memo="[characterState.alchemyHourlyCrafts]"
               v-bind="childAttrs.info"
               title="每小時製作"

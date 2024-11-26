@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { pages } from '@/plugins/route';
-import { IconKeys, getIcon } from '@/utils/icons';
+import { pages } from 'utils/route';
+import { getIcon } from 'utils/icons';
+import type { IconKeys } from 'utils/icons';
+
+useSeoMeta({
+  title: '黑色沙漠交易所計算機',
+  ogTitle: '黑色沙漠交易所計算機',
+  description: '簡易計算黑色沙漠中，加工及煉金產生的利潤、時間以及產量等。',
+  ogDescription: '簡易計算黑色沙漠中，加工及煉金產生的利潤、時間以及產量等。',
+});
 </script>
 
 <template>
@@ -24,6 +32,7 @@ import { IconKeys, getIcon } from '@/utils/icons';
         class="d-flex flex-column"
         width="300"
         :to="page.path"
+        :external="true"
       >
         <v-card-title
           tag="h2"

@@ -7,12 +7,13 @@ import RegionHeader from '@/components/RegionHeader.vue';
 const MPResult = defineAsyncComponent({
   loader: () => import('@/components/massProcessing/MPResult.vue')
 });
-import useCharacterStore from 'stores/useCharacterStore';
+import useCharacterStore from '~/features/stores/useCharacterStore';
 import useProcessingStore from 'stores/useProcessingStore';
 import { numFormat, round, sumAlongAttr, prevPage, nextPage } from '@/utils/helpers';
-import { getIcon, IconKeys } from '@/utils/icons';
+import { getIcon } from '@/utils/icons';
 import type { VDataTable } from 'vuetify/lib/components/index.mjs';
 import type { tier2HourlyStats } from '@/features/types/processingType';
+import type { IconKeys } from '@/utils/icons';
 
 const characterState = useCharacterStore();
 const processingState = useProcessingStore();
@@ -235,7 +236,7 @@ const actions: {
 </script>
 
 <template>
-  <v-container 
+  <v-container
     fluid
     class="d-flex"
   >
@@ -254,10 +255,9 @@ const actions: {
     >
       <template #headers="prop">
         <tr class="bg-content">
-          <th 
+          <th
             v-for="column in prop.columns"
             :key="column.title"
-            @click.stop="prop.toggleSort(column)"
             :class="[
               'v-data-table-column--align-center',
               'v-data-table__th',
@@ -267,6 +267,7 @@ const actions: {
             :style="{
               width: column.width
             }"
+            @click.stop="prop.toggleSort(column)"
           >
             <span>{{ column.title }}</span>
             <v-icon
@@ -316,14 +317,14 @@ const actions: {
             @update:model-value="tablePage = $event"
           />
           <v-btn
-            icon="mdi-page-first" 
+            icon="mdi-page-first"
             variant="text"
             size="large"
             :disabled="tablePage === 1"
             @click="tablePage = 1"
           />
           <v-btn
-            icon="mdi-chevron-left" 
+            icon="mdi-chevron-left"
             variant="text"
             :disabled="tablePage === 1"
             @click="
@@ -351,7 +352,7 @@ const actions: {
       :height="isShowInfo ? 500 : undefined"
     >
       <template #title>
-        <v-card-title 
+        <v-card-title
           :class="[
             'font-weight-bold px-4 py-2 my-0',
             isShowInfo ? 'bg-title' : ''

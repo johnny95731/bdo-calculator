@@ -40,8 +40,8 @@ const icon_ = getIcon(props.icon) ?? props.icon;
     ]"
   >
     <v-icon
-      class="mr-1"
       v-if="icon"
+      class="mr-1"
     >
       {{ icon_ }}
     </v-icon>

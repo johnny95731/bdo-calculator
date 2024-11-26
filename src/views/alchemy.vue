@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, reactive, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 // components
 import CommonBtn from '@/components/CommonBtn.vue';
@@ -18,10 +18,17 @@ const AlchemyRaw = defineAsyncComponent({
 import AlchemyResult from '@/components/alchemy/AlchemyResult.vue';
 // stores and utils
 import useAlchemyStore from 'stores/useAlchemyStore';
-import useEstimationStore from '@/features/stores/useEstimationStore';
-import { alchemyExample } from '@/utils/examples';
-import type { AlchemyExampleKey } from '@/utils/examples';
-import { computed } from 'vue';
+import useEstimationStore from 'stores/useEstimationStore';
+import { alchemyExample } from 'utils/examples';
+// types
+import type { AlchemyExampleKey } from 'utils/examples';
+
+useSeoMeta({
+  title: '黑色沙漠交易所計算機 - 煉金',
+  ogTitle: '黑色沙漠交易所計算機 - 煉金',
+  description: '計算黑色沙漠中煉金及產生的利潤、時間以及產量等，並可透過產物需求量估計原料需求量。',
+  ogDescription: '計算黑色沙漠中煉金及產生的利潤、時間以及產量等，並可透過產物需求量估計原料需求量。',
+});
 
 const alchemyState = useAlchemyStore();
 const { current } = storeToRefs(alchemyState);
@@ -32,8 +39,8 @@ const rareProd = reactive<{
   rate: string | number
 }>((() => {
   const state = {
-    show: !!current.value.rareProd || !!alchemyExample.elixir.rareProd,
-    ...(current.value.rareProd ?? alchemyExample.elixir.rareProd)
+    show: !!(current.value.rareProd || alchemyExample.elixir.rareProd),
+    ...(current.value.rareProd ?? alchemyExample.elixir.rareProd!)
   };
   // @ts-expect-error 'num' may exists in current.value.rareProd
   if (state.num !== undefined) delete state.num;
@@ -254,11 +261,11 @@ const alchemyReqRawData = computed(() => {
               </div>
             </div>
             <v-checkbox
+              v-model="rareProd.show"
               class="ms-n1 mb-n1"
               label="稀有產物"
               density="compact"
               :ripple="false"
-              v-model="rareProd.show"
             />
             <v-scroll-y-transition>
               <div
@@ -269,13 +276,13 @@ const alchemyReqRawData = computed(() => {
                 }"
               >
                 <v-text-field
+                  v-model="rareProd.rate"
                   class="mb-3"
                   label="稀有產物比例"
                   type="number"
                   min="0"
                   step="0.01"
                   density="compact"
-                  v-model="rareProd.rate"
                 >
                   <v-tooltip
                     activator="parent"
@@ -328,8 +335,8 @@ const alchemyReqRawData = computed(() => {
           />
           <CommonBtn
             type="append"
-            @click="alchemyState.appendRaw"
             :disabled="current.raw.length >= 5"
+            @click="alchemyState.appendRaw"
           />
         </v-sheet>
       </v-col>
@@ -409,6 +416,7 @@ const alchemyReqRawData = computed(() => {
     </v-btn-group>
     <TheDialog
       v-if="btnActionState.show"
+      v-model="btnActionState.show"
       v-memo="[btnActionState.show]"
       :title="btnActionState.type === 'save' ? '儲存最愛' : '覆蓋表單?'"
       :text="
@@ -416,14 +424,13 @@ const alchemyReqRawData = computed(() => {
           undefined :
           `範例 ${alchemyExample[btnActionState.data as AlchemyExampleKey].name}`
       "
-      v-model="btnActionState.show"
       @confirm="btnActionState.callback()"
     />
     <TheDialog
       title="製作次數"
       :model-value="craftsState.show"
-      @update:model-value="clickSetCrafts"
       :eager="true"
+      @update:model-value="clickSetCrafts"
     >
       <DataTable
         class="pa-0"
@@ -432,13 +439,13 @@ const alchemyReqRawData = computed(() => {
         :label-width="10"
       />
       <v-text-field
+        v-model="craftsState.crafts"
         class="pt-4"
         label="製作次數"
         type="number"
         inputmode="decimal"
         min="0"
         density="compact"
-        v-model="craftsState.crafts"
       />
     </TheDialog>
   </section>
@@ -476,19 +483,19 @@ const alchemyReqRawData = computed(() => {
             期望產物量
           </label>
           <v-text-field
+            v-model.number="alchemyEsti.demand.regular"
             label="一般產物"
             density="compact"
             type="number"
             inputmode="decimal"
             dirty
             min="1"
-            v-model.number="alchemyEsti.demand.regular"
           />
           <v-checkbox
+            v-model="alchemyEsti.hasRare"
             class="ms-n1 mb-n1"
             label="稀有產物"
             density="compact"
-            v-model="alchemyEsti.hasRare"
           />
           <v-scroll-y-transition>
             <div
@@ -499,6 +506,7 @@ const alchemyReqRawData = computed(() => {
               }"
             >
               <v-text-field
+                v-model.number="alchemyEsti.demand.rare"
                 class="mb-3"
                 label="稀有產物"
                 density="compact"
@@ -506,9 +514,9 @@ const alchemyReqRawData = computed(() => {
                 inputmode="decimal"
                 dirty
                 min="1"
-                v-model.number="alchemyEsti.demand.rare"
               />
               <v-text-field
+                v-model.number="alchemyEsti.rareRate"
                 class="mb-2"
                 label="稀有產物比例"
                 density="compact"
@@ -517,7 +525,6 @@ const alchemyReqRawData = computed(() => {
                 dirty
                 min="0"
                 step="0.01"
-                v-model.number="alchemyEsti.rareRate"
               >
                 <v-tooltip
                   activator="parent"
@@ -527,10 +534,10 @@ const alchemyReqRawData = computed(() => {
               </v-text-field>
               <v-checkbox-btn
                 id="to-rare"
+                v-model="alchemyEsti.toRare"
                 class="ms-n1 mb-n2"
                 label="全製作為稀有產物"
                 density="compact"
-                v-model="alchemyEsti.toRare"
               >
                 <template #label>
                   全製作為稀有產物

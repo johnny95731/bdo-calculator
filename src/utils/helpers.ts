@@ -7,42 +7,6 @@ export const deepCopy = <T>(obj: T): T => {
   return JSON.parse(JSON.stringify(obj));
 };
 
-/**
- * 操作資料庫
- */
-export const storage = {
-  /**
-   * Get item from localStorage and convert to corresponding type.
-   * @param key Key of item
-   * @param type Return type of item.
-   * @param d Default value when get null item.
-   */
-  get: (
-    key: string,
-    d?: unknown,
-    type: 'string' | 'number' | 'object' = 'object',
-  ) => {
-    const item = localStorage.getItem(key);
-    if (item === null) return d || null;
-    switch (type) {
-    case 'number': return Number(item);
-    case 'object': return JSON.parse(item);
-    }
-  },
-  /**
-   * Convert item to string and set to localStorage.
-   * @param key Key of item
-   * @param item Item that be saved.
-   */
-  set: (
-    key: string,
-    item: string | number | object
-  ) => {
-    const str = typeof item === 'object' ? JSON.stringify(item) : String(item);
-    localStorage.setItem(key, str);
-  }
-};
-
 
 // Number formation
 /**
@@ -66,7 +30,7 @@ export const getLastItem = <T extends unknown[]>(arr: T): T[number] => {
 
 export const removeItemByAttr = <T extends object, K extends keyof T>(
   arr: Array<T>, key: K, value: T[K]
-) => { 
+) => {
   const index = arr.findIndex((obj) => obj[key] === value);
   if (index > -1) return [index, arr.splice(index, 1)[0]] as const;
 };
@@ -124,7 +88,7 @@ export const prevPage = (num: number, max: number) => {
 /**
  * Return a Vuetify class of border radius from string of size and/or position.
  * @param rounded size and/or position.
- * @returns Border radius class. Empty string means rounded is invalid. 
+ * @returns Border radius class. Empty string means rounded is invalid.
  */
 export const getRoundedClass = <
   S extends typeof V_BORDER_SIZE[number],
