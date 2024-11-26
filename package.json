@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare",
     "prepare": "nuxt prepare",
     "predeploy": "npm run generate",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages --dotfiles -d dist"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
