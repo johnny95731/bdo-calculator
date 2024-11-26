@@ -10,7 +10,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "prepare": "nuxt prepare",
-    "predeploy": "npm run build",
+    "predeploy": "npm run generate",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
