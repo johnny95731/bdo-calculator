@@ -139,7 +139,7 @@ const hourlyStats = computed(() => {
     btnClass="px-3 py-1 font-weight-bold"
     textClass="px-3 pb-3 rounded-b-xl bg-surface"
     rounded="xl"
-    model:aexpand
+    expand
   >
     <DataTable
       v-for="(data, i) in totalStats"
@@ -158,7 +158,7 @@ const hourlyStats = computed(() => {
     btnClass="px-3 py-1 font-weight-bold"
     textClass="px-3 pb-3 rounded-b-xl bg-surface"
     rounded="xl"
-    model:aexpand
+    expand
   >
     <DataTable
       v-for="(data, i) in hourlyStats"

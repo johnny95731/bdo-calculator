@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isHovering = ref(false);
 // 展開panel
-const expand = defineModel<boolean>('expand', { default: true });
+const expand = defineModel<boolean>('expand', { default: false });
 
 const btnClass_ = computed(() => {
   let css: string = '';
