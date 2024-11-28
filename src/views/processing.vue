@@ -30,19 +30,11 @@ useSeoMeta({
   ogDescription: '計算黑色沙漠中加工及產生的利潤、時間以及產量等，並可透過產物需求量估計原料需求量。',
 });
 
-const windowItemClass = {
-  panel: 'h-100 px-4 py-3',
-};
-
 // 頁面切換
 type pageIndices = 1 | 2 | 3;
 const INIT_PAGE: pageIndices = 1;
 const page = ref<pageIndices>(INIT_PAGE);
 const titles = ['基本材料', '一階加工', '二階加工'] as const;
-const pageTitle = ref<typeof titles[number]>(titles[INIT_PAGE - 1]);
-watch(page, (newVal) => {
-  pageTitle.value = titles[newVal - 1];
-});
 
 const processingState = useProcessingStore();
 
@@ -151,84 +143,79 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
       <v-col
         class="column-flow"
       >
-        <RegionHeader
-          tag="h3"
-          :title="pageTitle"
-          color="processing-lighten-1"
-          rounded="0"
-        />
         <v-window
           v-model="page"
           class="flex-1-1 overflow-y-scroll"
-          style="height: 0;"
         >
           <v-window-item
-            :class="windowItemClass.panel"
-            :value="1"
+            v-for="(idx) in 3"
+            :key="idx"
+            class="h-100"
+            :value="idx"
           >
+            <RegionHeader
+              tag="h3"
+              :title="titles[idx-1]"
+              color="processing-lighten-1"
+              rounded="0"
+            />
             <v-sheet
-              class="bg-transparent text-center"
+              class="bg-transparent text-center px-4 py-3"
               rounded="lg"
             >
-              <TheRaw
-                v-for="(raw, i) in processingState.raw"
-                :key="i"
-                :raw="raw"
-                :idx="i"
-              />
-              <CommonBtn
-                type="append"
-                :disabled="processingState.raw.length >= 25"
-                @click="processingState.appendGoods(0)"
-              />
-            </v-sheet>
-          </v-window-item>
-          <v-window-item
-            :class="windowItemClass.panel"
-            :value="2"
-          >
-            <v-sheet
-              class="rounded-lg bg-brown-lighten-4 text-center"
-            >
-              <TheProduct
-                v-for="(product, i) in processingState.tier1"
-                :key="i"
-                :tier="1"
-                :product="product"
-                :hourlyInfo="tier1HourlyInfo[i]"
-                :idx="i"
-                :lowTierNames="names[0]"
-                :selectedRaws="selectedRaws"
-              />
-              <CommonBtn
-                type="append"
-                :disabled="processingState.tier1.length >= 10"
-                @click="processingState.appendGoods(1)"
-              />
-            </v-sheet>
-          </v-window-item>
-          <v-window-item
-            :class="windowItemClass.panel"
-            :value="3"
-          >
-            <v-sheet
-              class="rounded-lg bg-transparent text-center"
-            >
-              <TheProduct
-                v-for="(product, i) in processingState.tier2"
-                :key="i"
-                :tier="2"
-                :product="product"
-                :hourlyInfo="tier2HourlyInfo[i]"
-                :idx="i"
-                :lowTierNames="names[1]"
-                :selectedRaws="selectedRawNTier1"
-              />
-              <CommonBtn
-                type="append"
-                :disabled="processingState.tier2.length >= 5"
-                @click="processingState.appendGoods(2)"
-              />
+              <template
+                v-if="page === 1"
+              >
+                <TheRaw
+                  v-for="(raw, i) in processingState.raw"
+                  :key="i"
+                  :raw="raw"
+                  :idx="i"
+                />
+                <CommonBtn
+                  type="append"
+                  :disabled="processingState.raw.length >= 25"
+                  @click="processingState.appendGoods(0)"
+                />
+              </template>
+              <template
+                v-else-if="page === 2"
+              >
+                <TheProduct
+                  v-for="(product, i) in processingState.tier1"
+                  :key="i"
+                  :tier="1"
+                  :product="product"
+                  :hourlyInfo="tier1HourlyInfo[i]"
+                  :idx="i"
+                  :lowTierNames="names[0]"
+                  :selectedRaws="selectedRaws"
+                />
+                <CommonBtn
+                  type="append"
+                  :disabled="processingState.tier1.length >= 10"
+                  @click="processingState.appendGoods(1)"
+                />
+              </template>
+              <template
+                v-else
+              >
+                <TheProduct
+                  v-for="(product, i) in processingState.tier2"
+                  :key="i"
+                  :tier="2"
+                  :product="product"
+                  :hourlyInfo="tier2HourlyInfo[i]"
+                  :idx="i"
+                  :lowTierNames="names[1]"
+                  :selectedRaws="selectedRawNTier1"
+                />
+                <CommonBtn
+                  type="append"
+                  :disabled="processingState.tier2.length >= 5"
+                  @click="processingState.appendGoods(2)"
+                />
+              </template>
             </v-sheet>
           </v-window-item>
         </v-window>
@@ -236,6 +223,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
           class="justify-space-between px-4 py-2 bg-processing-lighten-1"
         >
           <v-btn
+            v-once
             icon="mdi-chevron-left"
             variant="text"
             @click="page = prevPage(page, 3) as pageIndices"
@@ -259,6 +247,7 @@ const inverseMethodTier1 = toRef(() => estimationState.processing.tier1);
             </v-item>
           </v-item-group>
           <v-btn
+            v-once
             icon="mdi-chevron-right"
             variant="text"
             @click="page = nextPage(page, 3) as pageIndices"
