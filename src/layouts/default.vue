@@ -25,35 +25,38 @@ const router = useRouter();
 const currentRoute = router.currentRoute;
 
 
-const navDrawerState = reactive({
-  rail: false,
-  temporary: unref(currentRoute).path !== '/',
-  model: unref(currentRoute).path === '/',
-});
-const clickAppBarNavIcon = () => {
-  const key = navDrawerState.temporary ? 'model' : 'rail';
-  Object.assign(navDrawerState, { [key]: !navDrawerState[key] });
-};
-
-router.beforeEach((to) => {
+const getNavDrawerState = () => {
   // navigation-drawer，以類似youtube方式執行
   // 首頁為`rail`方式，完整 <--> 縮小到剩icon
   // 其他頁以temporary，完整+overlay <--> 完全收起(看不見)
-  const isHome = to.path === '/';
-  Object.assign(navDrawerState, {
+  const isHome = unref(currentRoute).path === '/';
+  return {
+    rail: false,
     temporary: !isHome,
     model: isHome,
-  });
+  };
+};
+const navDrawerState = reactive(getNavDrawerState());
+const clickAppBarNavIcon = () => {
+  const key = navDrawerState.temporary ? 'model' : 'rail';
+  navDrawerState[key] = !navDrawerState[key];
+};
+
+router.afterEach ((to, _, failure) => {
+  if (!failure) {
+    Object.assign(navDrawerState, getNavDrawerState());
+  }
 });
 
-// update localstorage when leave.
-const characterState = useCharacterStore();
-const processingState = useProcessingStore();
-const alchemyState = useAlchemyStore();
 onMounted(() => {
+  const characterState = useCharacterStore();
+  const processingState = useProcessingStore();
+  const alchemyState = useAlchemyStore();
+  // Load data from localstorage.
   characterState.$reset();
   processingState.$reset();
   alchemyState.$reset();
+  // Update localstorage when closing the site.
   window.addEventListener('beforeunload', () => {
     characterState.updateStorage();
     processingState.updateStorage();
@@ -112,59 +115,54 @@ onMounted(() => {
     width="180"
     :temporary="navDrawerState.temporary"
   >
-    <nav
-      v-once
-      class="h-100 my-n1 column-flow ga-1"
+    <v-list-item
+      v-for="page in pages"
+      :key="page.title"
+      link
+      :to="page.path"
+      :prepend-icon="page.name && getIcon(page.name as IconKeys)"
     >
-      <v-list-item
-        v-for="page in pages"
-        :key="page.title"
-        link
-        :to="page.path"
-        :prepend-icon="page.name && getIcon(page.name as IconKeys)"
+      <v-list-item-title
+        class="w-auto text-left text-body-1 font-weight-bold"
       >
-        <v-list-item-title
-          class="w-auto text-left text-body-1 font-weight-bold"
+        {{ page.title }}
+      </v-list-item-title>
+    </v-list-item>
+    <v-list-item
+      id="links"
+      tag="button"
+      :prepend-icon="getIcon('link')"
+    >
+      <v-list-item-title
+        class="w-auto text-left text-body-1 font-weight-bold"
+      >
+        相關連結
+      </v-list-item-title>
+    </v-list-item>
+    <v-menu
+      location="end"
+      activator="#links"
+    >
+      <v-list>
+        <v-list-item
+          v-for="link in links"
+          :key="link.name"
+          link
+          :href="link.href"
+          target="_blank"
         >
-          {{ page.title }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        id="links"
-        tag="button"
-        :prepend-icon="getIcon('link')"
-      >
-        <v-list-item-title
-          class="w-auto text-left text-body-1 font-weight-bold"
-        >
-          相關連結
-        </v-list-item-title>
-      </v-list-item>
-      <v-menu
-        location="end"
-        activator="#links"
-      >
-        <v-list>
-          <v-list-item
-            v-for="link in links"
-            :key="link.name"
-            link
-            :href="link.href"
-            target="_blank"
+          <v-list-item-title
+            class="w-auto text-left"
           >
-            <v-list-item-title
-              class="w-auto text-left"
+            <label
+              class="text-body-1 font-weight-bold"
             >
-              <label
-                class="text-body-1 font-weight-bold"
-              >
-                {{ link.name }}
-              </label>
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </nav>
+              {{ link.name }}
+            </label>
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-navigation-drawer>
   <v-main>
     <slot />
