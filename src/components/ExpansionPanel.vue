@@ -29,11 +29,6 @@ const isHovering = ref(false);
 // 展開panel
 const expand = defineModel<boolean>('expand', { default: false });
 
-const btnClass_ = computed(() => {
-  let css: string = '';
-  if (props.btnClass) css = css.concat(` ${props.btnClass}`);
-  return css;
-});
 const rounded = computed(() => {
   if (props.rounded) {
     return expand.value ?
@@ -75,7 +70,7 @@ const textClass_ = computed(() => {
         v-bind="hoverProps"
         :class="[
           'activator justify-space-between',
-          btnClass_,
+          props.btnClass,
           rounded,
         ]"
         type="button"
