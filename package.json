@@ -14,28 +14,28 @@
     "deploy": "gh-pages --dotfiles -d dist"
   },
   "dependencies": {
-    "@mdi/font": "7.0.96",
-    "@pinia/nuxt": "^0.7.0",
-    "@vueuse/core": "^10.9.0",
-    "nuxt": "^3.14.1592",
-    "pinia": "^2.1.7",
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.11.3",
+    "@vueuse/core": "^14.1.0",
+    "nuxt": "^4.2.2",
+    "pinia": "^3.0.4",
     "roboto-fontface": "*",
-    "vue": "^3.5.13",
-    "vuetify": "^3.7.4"
+    "vue": "^3.5.26",
+    "vuetify": "^3.11.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.10.0",
-    "@nuxt/eslint": "^0.7.1",
-    "@types/node": "^20.10.0",
-    "eslint": "9.10.0",
-    "eslint-plugin-vue": "^9.28.0",
-    "gh-pages": "^6.1.1",
-    "sass": "^1.69.0",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.15.0",
-    "unplugin-fonts": "^1.1.0",
-    "vite-plugin-dynamic-import": "^1.5.0",
-    "vite-plugin-vuetify": "^2.0.3",
-    "vue-tsc": "^2.0.19"
+    "@eslint/js": "^9.39.2",
+    "@nuxt/eslint": "^1.12.1",
+    "@types/node": "^25.0.6",
+    "eslint": "^9.39.2",
+    "eslint-plugin-vue": "^10.6.2",
+    "gh-pages": "^6.3.0",
+    "sass": "^1.97.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0",
+    "unplugin-fonts": "^1.4.0",
+    "vite-plugin-dynamic-import": "^1.6.0",
+    "vite-plugin-vuetify": "^2.1.2",
+    "vue-tsc": "^3.2.2"
   }
 }
